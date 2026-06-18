@@ -23,12 +23,13 @@ public class Ruta {
         this.idDestino = idDestino;
     }
 
-    // Getters y Setters
     public int getIdRuta() {
+
         return idRuta;
     }
 
     public int getIdOrigen() {
+
         return idOrigen;
     }
 
@@ -40,6 +41,7 @@ public class Ruta {
     }
 
     public int getIdDestino() {
+
         return idDestino;
     }
 
@@ -50,8 +52,8 @@ public class Ruta {
         this.idDestino = idDestino;
     }
 
-    // Método de negocio auxiliar para verificar si dos rutas colisionan en origen-destino
     public boolean esIgualA(int origen, int destino) {
+
         return this.idOrigen == origen && this.idDestino == destino;
     }
 

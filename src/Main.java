@@ -13,7 +13,7 @@ public class Main {
         System.out.println("==================================================");
 
         System.out.println("\n--- TEST Módulo 1: Búsqueda de Rutas (DFS) ---");
-        sistema.buscarYMostrarRutas("BUE", "BRC", 3);
+        sistema.buscarYMostrarRutas("BUE", "BRC", 1);
 
         System.out.println("\n--- TEST Módulo 2: Gestión de Flota (Micros) ---");
 

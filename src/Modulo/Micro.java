@@ -3,10 +3,10 @@ package Modulo;
 import Exceptions.InvalidMicroException;
 
 public class Micro {
-    private String patente;              // Identificador único (patente o interno)
-    private String tipo;                 // Ejecutivo, Semi-cama, Cama
-    private boolean disponible;          // Control de estado de disponibilidad
-    private int contadorAsignaciones;    // Rastreo de cantidad de viajes asignados
+    private String patente;
+    private String tipo;
+    private boolean disponible;
+    private int contadorAsignaciones;
 
     public Micro(String patente, String tipo) {
         if (patente == null || patente.trim().isEmpty()) {
@@ -17,35 +17,41 @@ public class Micro {
         }
 
         String tipoUpper = tipo.toUpperCase().trim();
-        // Validación estricta de los tipos permitidos por el enunciado
         if (!tipoUpper.equals("EJECUTIVO") && !tipoUpper.equals("SEMI-CAMA") && !tipoUpper.equals("CAMA")) {
             throw new InvalidMicroException("Tipo de micro inválido. Los permitidos son: Ejecutivo, Semi-cama o Cama.");
         }
 
         this.patente = patente.toUpperCase().trim();
         this.tipo = tipoUpper;
-        this.disponible = true;          // Todo micro inicia operativo y disponible
+        this.disponible = true;
         this.contadorAsignaciones = 0;
     }
 
-    // Getters y Setters con validaciones internas
     public String getPatente() {
         return patente;
     }
 
     public String getTipo() {
+
         return tipo;
     }
 
     public boolean isDisponible() {
+
         return disponible;
     }
 
     public void setDisponible(boolean disponible) {
+
         this.disponible = disponible;
     }
 
+    public void incrementarAsignaciones() {
+        this.contadorAsignaciones++;
+    }
+
     public int getContadorAsignaciones() {
+
         return contadorAsignaciones;
     }
 
