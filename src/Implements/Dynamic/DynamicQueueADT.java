@@ -5,8 +5,8 @@ import Implements.Dynamic.Nodes.Node;
 import Interfaces.QueueADT;
 
 public class DynamicQueueADT implements QueueADT {
-    private Node first; // Para desencolar (remove)
-    private Node last;  // Para encolar (add)
+    private Node first;
+    private Node last;
 
     public DynamicQueueADT() {
         this.first = null;
@@ -17,17 +17,17 @@ public class DynamicQueueADT implements QueueADT {
     public void add(int value) {
         Node newNode = new Node(value);
         if (isEmpty()) {
-            first = newNode; // Si es el primero, es tanto el inicio como el fin
+            first = newNode;
         } else {
-            last.next = newNode; // El que era último ahora apunta al nuevo
+            last.next = newNode;
         }
-        last = newNode; // El nuevo pasa a ser el último oficialmente
+        last = newNode;
     }
 
     @Override
     public void remove() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés sacar de una cola vacía
+            throw new EmptyStructureException();
         }
         first = first.next;
         if (first == null) {
@@ -38,7 +38,7 @@ public class DynamicQueueADT implements QueueADT {
     @Override
     public int getElement() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return first.value;
     }

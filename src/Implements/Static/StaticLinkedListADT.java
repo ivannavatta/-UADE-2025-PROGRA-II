@@ -9,14 +9,14 @@ public class StaticLinkedListADT implements LinkedListADT {
     private int count;
 
     public StaticLinkedListADT() {
-        this.array = new int[100]; // Tamaño por defecto
+        this.array = new int[100];
         this.count = 0;
     }
 
     @Override
     public void add(int value) {
         if (count >= array.length) {
-            throw new FullStructureException(); // la lista estática está llena
+            throw new FullStructureException();
         }
         array[count] = value;
         count++;
@@ -25,10 +25,10 @@ public class StaticLinkedListADT implements LinkedListADT {
     @Override
     public void insert(int index, int value) {
         if (index < 0 || index > count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         if (count >= array.length) {
-            throw new FullStructureException(); // la lista estática está llena
+            throw new FullStructureException();
         }
         for (int i = count; i > index; i--) {
             array[i] = array[i - 1];
@@ -40,7 +40,7 @@ public class StaticLinkedListADT implements LinkedListADT {
     @Override
     public int get(int index) {
         if (index < 0 || index >= count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         return array[index];
     }
@@ -58,7 +58,7 @@ public class StaticLinkedListADT implements LinkedListADT {
     @Override
     public void remove(int index) {
         if (index < 0 || index >= count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         for (int i = index; i < count - 1; i++) {
             array[i] = array[i + 1];

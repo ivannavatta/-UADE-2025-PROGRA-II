@@ -7,13 +7,12 @@ import Interfaces.GraphADT;
 import Interfaces.SetADT;
 
 public class DynamicGraphADT implements GraphADT {
-    private VertexNode head; // lista de vértices
+    private VertexNode head;
 
     public DynamicGraphADT() {
         this.head = null;
     }
 
-    // Busca el nodo del vértice, o null si no existe
     private VertexNode findVertex(int vertex) {
         VertexNode current = head;
         while (current != null) {
@@ -36,7 +35,7 @@ public class DynamicGraphADT implements GraphADT {
 
     @Override
     public void addVertex(int vertex) {
-        if (findVertex(vertex) != null) return; // ya existe, no duplica
+        if (findVertex(vertex) != null) return;
         VertexNode newNode = new VertexNode(vertex);
         newNode.next = head;
         head = newNode;
@@ -46,14 +45,12 @@ public class DynamicGraphADT implements GraphADT {
     public void removeVertex(int vertex) {
         if (isEmpty()) throw new EmptyStructureException();
 
-        // Eliminar todas las aristas que apuntan a este vértice
         VertexNode current = head;
         while (current != null) {
             removeEdgeFromList(current, vertex);
             current = current.next;
         }
 
-        // Eliminar el nodo del vértice
         if (head.vertex == vertex) {
             head = head.next;
             return;
@@ -68,7 +65,6 @@ public class DynamicGraphADT implements GraphADT {
         }
     }
 
-    // Elimina una arista de la lista de adyacencia de un vértice
     private void removeEdgeFromList(VertexNode vertexNode, int target) {
         if (vertexNode.edgesHead == null) return;
         if (vertexNode.edgesHead.vertex == target) {
@@ -89,15 +85,13 @@ public class DynamicGraphADT implements GraphADT {
     public void addEdge(int vertxOne, int vertxTwo, int weight) {
         VertexNode v1 = findVertex(vertxOne);
         VertexNode v2 = findVertex(vertxTwo);
-        if (v1 == null || v2 == null) return; // los vértices deben existir
+        if (v1 == null || v2 == null) return;
 
-        // Grafo no dirigido: agrega en ambas listas
         addEdgeToList(v1, vertxTwo, weight);
         addEdgeToList(v2, vertxOne, weight);
     }
 
     private void addEdgeToList(VertexNode vertexNode, int target, int weight) {
-        // Si la arista ya existe, actualiza el peso
         EdgeNode current = vertexNode.edgesHead;
         while (current != null) {
             if (current.vertex == target) {
@@ -106,7 +100,6 @@ public class DynamicGraphADT implements GraphADT {
             }
             current = current.next;
         }
-        // Nueva arista al frente
         EdgeNode newEdge = new EdgeNode(target, weight);
         newEdge.next = vertexNode.edgesHead;
         vertexNode.edgesHead = newEdge;
@@ -116,9 +109,8 @@ public class DynamicGraphADT implements GraphADT {
     public void removeEdge(int vertxOne, int vertxTwo) {
         VertexNode v1 = findVertex(vertxOne);
         VertexNode v2 = findVertex(vertxTwo);
-        if (v1 == null || v2 == null) return; // no hace nada si no existen
+        if (v1 == null || v2 == null) return;
 
-        // Grafo no dirigido: elimina en ambas listas
         removeEdgeFromList(v1, vertxTwo);
         removeEdgeFromList(v2, vertxOne);
     }

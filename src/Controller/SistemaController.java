@@ -112,30 +112,6 @@ public class SistemaController {
     }
 
 
-    private void agrandarTerminales() {
-        Terminal[] nuevo = new Terminal[terminales.length * 2];
-        for (int i = 0; i < terminales.length; i++) nuevo[i] = terminales[i];
-        terminales = nuevo;
-    }
-
-    private void agrandarRutas() {
-        Ruta[] nuevo = new Ruta[rutas.length * 2];
-        for (int i = 0; i < rutas.length; i++) nuevo[i] = rutas[i];
-        rutas = nuevo;
-    }
-
-    private void agrandarViajes() {
-        Viaje[] nuevo = new Viaje[viajes.length * 2];
-        for (int i = 0; i < viajes.length; i++) nuevo[i] = viajes[i];
-        viajes = nuevo;
-    }
-
-    private void agrandarFlota() {
-        Micro[] nuevo = new Micro[flotaMicros.length * 2];
-        for (int i = 0; i < flotaMicros.length; i++) nuevo[i] = flotaMicros[i];
-        flotaMicros = nuevo;
-    }
-
     public int buscarIdPorCodigo(String codigo) {
         if (codigo == null) return -1;
         for (int i = 0; i < contadorTerminales; i++) {
@@ -191,14 +167,13 @@ public class SistemaController {
         if (buscarIdPorCodigo(codigo) != -1) {
             throw new InvalidTerminalException("Ya existe una terminal registrada con el código: " + codigo);
         }
-        if (contadorTerminales == terminales.length) agrandarTerminales();
 
         int nuevoId = contadorTerminales;
         terminales[contadorTerminales] = new Terminal(nuevoId, codigo, descripcion);
         contadorTerminales++;
 
         mapaRutas.addVertex(nuevoId);
-        listaIdTerminales.add(nuevoId); // Módulo 4: iterar terminales sin depender del array
+        listaIdTerminales.add(nuevoId);
     }
 
     public void conectarTerminales(String codigoOrigen, String codigoDestino, int pesoCamino) {
@@ -214,14 +189,13 @@ public class SistemaController {
             }
         }
 
-        if (contadorRutas == rutas.length) agrandarRutas();
 
         int nuevoIdRuta = contadorRutas;
         rutas[contadorRutas] = new Ruta(nuevoIdRuta, idOrigen, idDestino);
         contadorRutas++;
 
         mapaRutas.addEdge(idOrigen, idDestino, pesoCamino);
-        listaIdRutas.add(nuevoIdRuta); // Módulo 5: iterar rutas en reporte de extremos
+        listaIdRutas.add(nuevoIdRuta);
     }
 
     public void planificarViaje(String codigoOrigen, String codigoDestino, String patente, String fecha) {
@@ -234,8 +208,6 @@ public class SistemaController {
         if (microReal == null) {
             throw new InvalidMicroException("El micro con patente " + patente + " no está registrado en la flota.");
         }
-
-        if (contadorViajes == viajes.length) agrandarViajes();
 
         int idViaje = contadorViajes;
         viajes[contadorViajes] = new Viaje(idViaje, ruta, microReal, fecha);
@@ -351,7 +323,6 @@ public class SistemaController {
         if (buscarMicroPorPatente(patente) != null) {
             throw new InvalidMicroException("Ya existe un micro registrado con la patente: " + patente);
         }
-        if (contadorMicros == flotaMicros.length) agrandarFlota();
 
         int idMicro = contadorMicros;
         flotaMicros[contadorMicros] = new Micro(patente, tipo);

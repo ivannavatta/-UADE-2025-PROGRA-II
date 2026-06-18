@@ -18,7 +18,7 @@ public class StaticPriorityQueueADT implements PriorityQueueADT {
     @Override
     public void add(int value, int priority) {
         if (count >= values.length) {
-            throw new FullStructureException(); // la cola estática está llena
+            throw new FullStructureException();
         }
         int index = 0;
         while (index < count && priorities[index] >= priority) {
@@ -36,7 +36,7 @@ public class StaticPriorityQueueADT implements PriorityQueueADT {
     @Override
     public void remove() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés sacar de una cola vacía
+            throw new EmptyStructureException();
         }
         for (int i = 0; i < count - 1; i++) {
             values[i] = values[i + 1];
@@ -48,7 +48,7 @@ public class StaticPriorityQueueADT implements PriorityQueueADT {
     @Override
     public int getElement() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return values[0];
     }
@@ -56,7 +56,7 @@ public class StaticPriorityQueueADT implements PriorityQueueADT {
     @Override
     public int getPriority() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return priorities[0];
     }

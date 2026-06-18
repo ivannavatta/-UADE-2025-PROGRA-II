@@ -33,7 +33,7 @@ public class StaticSetADT implements SetADT {
     @Override
     public void add(int value) {
         if (size == capacity) throw new FullStructureException();
-        if (exist(value)) return; // no se permiten repetidos
+        if (exist(value)) return;
         elements[size] = value;
         size++;
     }
@@ -43,13 +43,11 @@ public class StaticSetADT implements SetADT {
         if (isEmpty()) throw new EmptyStructureException();
         for (int i = 0; i < size; i++) {
             if (elements[i] == element) {
-                // Mueve el último al lugar eliminado
                 elements[i] = elements[size - 1];
                 size--;
                 return;
             }
         }
-        // Si no existe, no hace nada
     }
 
     @Override

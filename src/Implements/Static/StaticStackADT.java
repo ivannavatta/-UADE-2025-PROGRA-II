@@ -16,7 +16,7 @@ public class StaticStackADT implements StackADT {
     @Override
     public void add(int value) {
         if (top >= array.length - 1) {
-            throw new FullStructureException(); // la pila estática está llena
+            throw new FullStructureException();
         }
         array[++top] = value;
     }
@@ -24,7 +24,7 @@ public class StaticStackADT implements StackADT {
     @Override
     public void remove() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés sacar de una pila vacía
+            throw new EmptyStructureException();
         }
         top--;
     }
@@ -32,7 +32,7 @@ public class StaticStackADT implements StackADT {
     @Override
     public int getElement() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una pila vacía
+            throw new EmptyStructureException();
         }
         return array[top];
     }

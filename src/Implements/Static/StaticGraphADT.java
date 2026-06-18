@@ -5,12 +5,6 @@ import Interfaces.GraphADT;
 import Interfaces.SetADT;
 
 public abstract class StaticGraphADT implements GraphADT {
-    /*
-     * Implementación con matriz de adyacencia.
-     * - Los vértices son mapeados a índices internos (0 a capacity-1).
-     * - adjacency[i][j] = peso de la arista entre el vértice i y j, o NO_EDGE si no existe.
-     * - vertexMap[i] almacena el valor del vértice en la posición i, o EMPTY si no hay.
-     */
     private static final int NO_EDGE = Integer.MIN_VALUE;
     private static final int EMPTY   = Integer.MIN_VALUE;
 
@@ -35,7 +29,6 @@ public abstract class StaticGraphADT implements GraphADT {
         }
     }
 
-    // Retorna el índice interno del vértice, o -1 si no existe
     private int findIndex(int vertex) {
         for (int i = 0; i < capacity; i++) {
             if (vertexActive[i] && vertexMap[i] == vertex) return i;
@@ -43,7 +36,6 @@ public abstract class StaticGraphADT implements GraphADT {
         return -1;
     }
 
-    // Retorna un índice libre en vertexMap, o -1 si está lleno
     private int findFreeIndex() {
         for (int i = 0; i < capacity; i++) {
             if (!vertexActive[i]) return i;
@@ -74,9 +66,8 @@ public abstract class StaticGraphADT implements GraphADT {
     public void removeVertex(int vertex) {
         if (isEmpty()) throw new EmptyStructureException();
         int index = findIndex(vertex);
-        if (index == -1) return; // no existe, no hace nada
+        if (index == -1) return;
 
-        // Eliminar todas las aristas del vértice
         for (int j = 0; j < capacity; j++) {
             adjacency[index][j] = NO_EDGE;
             adjacency[j][index] = NO_EDGE;
@@ -89,7 +80,7 @@ public abstract class StaticGraphADT implements GraphADT {
     public void addEdge(int vertxOne, int vertxTwo, int weight) {
         int i = findIndex(vertxOne);
         int j = findIndex(vertxTwo);
-        if (i == -1 || j == -1) return; // los vértices deben existir
+        if (i == -1 || j == -1) return;
 
         // Grafo no dirigido
         adjacency[i][j] = weight;
@@ -100,7 +91,7 @@ public abstract class StaticGraphADT implements GraphADT {
     public void removeEdge(int vertxOne, int vertxTwo) {
         int i = findIndex(vertxOne);
         int j = findIndex(vertxTwo);
-        if (i == -1 || j == -1) return; // no hace nada si no existen
+        if (i == -1 || j == -1) return;
 
         adjacency[i][j] = NO_EDGE;
         adjacency[j][i] = NO_EDGE;

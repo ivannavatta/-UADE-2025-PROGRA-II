@@ -14,7 +14,6 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
         this.head = null;
     }
 
-    // Busca el nodo de la clave, o null si no existe
     private MultiDictionaryNode findKey(int key) {
         MultiDictionaryNode current = head;
         while (current != null) {
@@ -28,12 +27,10 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
     public void add(int key, int value) {
         MultiDictionaryNode keyNode = findKey(key);
         if (keyNode == null) {
-            // Clave nueva: crea nodo y lo agrega al frente
             MultiDictionaryNode newNode = new MultiDictionaryNode(key, value);
             newNode.next = head;
             head = newNode;
         } else {
-            // Clave existente: agrega valor al frente de su lista
             MultiValueNode newValue = new MultiValueNode(value);
             newValue.next = keyNode.valuesHead;
             keyNode.valuesHead = newValue;
@@ -55,21 +52,18 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
             }
             current = current.next;
         }
-        // Si no existe, no hace nada
     }
 
     @Override
     public void remove(int key, int value) {
         if (isEmpty()) throw new EmptyStructureException();
         MultiDictionaryNode keyNode = findKey(key);
-        if (keyNode == null) return; // no existe la clave, no hace nada
+        if (keyNode == null) return;
 
-        // Eliminar el valor de la lista de valores
         if (keyNode.valuesHead == null) return;
 
         if (keyNode.valuesHead.value == value) {
             keyNode.valuesHead = keyNode.valuesHead.next;
-            // Si la lista quedó vacía, eliminar la clave
             if (keyNode.valuesHead == null) remove(key);
             return;
         }
@@ -82,7 +76,6 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
             }
             current = current.next;
         }
-        // Si el valor no existe, no hace nada
     }
 
     @Override
@@ -91,7 +84,6 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
         MultiDictionaryNode keyNode = findKey(key);
         if (keyNode == null) throw new KeyNotFoundException();
 
-        // Contar valores
         int count = 0;
         MultiValueNode current = keyNode.valuesHead;
         while (current != null) {
@@ -99,7 +91,6 @@ public class DynamicMultipleDictionaryADT implements MultipleDictionaryADT {
             current = current.next;
         }
 
-        // Llenar array
         int[] result = new int[count];
         current = keyNode.valuesHead;
         for (int i = 0; i < count; i++) {

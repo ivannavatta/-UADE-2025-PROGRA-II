@@ -11,12 +11,10 @@ public class DynamicPriorityQueueADT implements PriorityQueueADT {
     public void add(int value, int priority) {
         PriorityNode newNode = new PriorityNode(value, priority);
 
-        // Caso 1: Lista vacía o el nuevo tiene más prioridad (número menor) que el primero
         if (first == null || priority < first.priority) {
             newNode.next = first;
             first = newNode;
         } else {
-            // Caso 2: Buscar el lugar correcto en el medio o al final
             PriorityNode current = first;
             while (current.next != null && current.next.priority >= priority) {
                 current = current.next;
@@ -29,7 +27,7 @@ public class DynamicPriorityQueueADT implements PriorityQueueADT {
     @Override
     public void remove() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés sacar de una cola vacía
+            throw new EmptyStructureException();
         }
         first = first.next;
     }
@@ -37,7 +35,7 @@ public class DynamicPriorityQueueADT implements PriorityQueueADT {
     @Override
     public int getElement() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return first.value;
     }
@@ -45,7 +43,7 @@ public class DynamicPriorityQueueADT implements PriorityQueueADT {
     @Override
     public int getPriority() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return first.priority;
     }

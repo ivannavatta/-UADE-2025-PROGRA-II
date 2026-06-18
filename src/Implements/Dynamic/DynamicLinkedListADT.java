@@ -5,8 +5,8 @@ import Implements.Dynamic.Nodes.Node;
 import Interfaces.LinkedListADT;
 
 public class DynamicLinkedListADT implements LinkedListADT {
-    private Node first; // Puntero al inicio de la lista
-    private int count;  // Contador de elementos
+    private Node first;
+    private int count;
 
     public DynamicLinkedListADT() {
         this.first = null;
@@ -20,7 +20,7 @@ public class DynamicLinkedListADT implements LinkedListADT {
             first = newNode;
         } else {
             Node current = first;
-            while (current.next != null) { // Recorremos hasta el final
+            while (current.next != null) {
                 current = current.next;
             }
             current.next = newNode;
@@ -31,7 +31,7 @@ public class DynamicLinkedListADT implements LinkedListADT {
     @Override
     public void insert(int index, int value) {
         if (index < 0 || index > count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         Node newNode = new Node(value);
         if (index == 0) {
@@ -51,7 +51,7 @@ public class DynamicLinkedListADT implements LinkedListADT {
     @Override
     public int get(int index) {
         if (index < 0 || index >= count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         Node current = first;
         for (int i = 0; i < index; i++) {
@@ -73,7 +73,7 @@ public class DynamicLinkedListADT implements LinkedListADT {
     @Override
     public void remove(int index) {
         if (index < 0 || index >= count) {
-            throw new IndexOutOfBoundsException(); // índice inválido
+            throw new IndexOutOfBoundsException();
         }
         if (index == 0) {
             first = first.next;

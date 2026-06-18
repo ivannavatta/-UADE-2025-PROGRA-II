@@ -19,7 +19,6 @@ public class StaticSimpleDictionaryADT implements SimpleDictionaryADT {
         this.size = 0;
     }
 
-    // Retorna el índice de la clave, o -1 si no existe
     private int findIndex(int key) {
         for (int i = 0; i < size; i++) {
             if (keys[i] == key) return i;
@@ -31,7 +30,6 @@ public class StaticSimpleDictionaryADT implements SimpleDictionaryADT {
     public void add(int key, int value) {
         int index = findIndex(key);
         if (index != -1) {
-            // Clave existente: pisa el valor
             values[index] = value;
         } else {
             if (size == capacity) throw new FullStructureException();
@@ -45,8 +43,7 @@ public class StaticSimpleDictionaryADT implements SimpleDictionaryADT {
     public void remove(int key) {
         if (isEmpty()) throw new EmptyStructureException();
         int index = findIndex(key);
-        if (index == -1) return; // no existe, no hace nada
-        // Mueve el último al lugar eliminado
+        if (index == -1) return;
         keys[index] = keys[size - 1];
         values[index] = values[size - 1];
         size--;

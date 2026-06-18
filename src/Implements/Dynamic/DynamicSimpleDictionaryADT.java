@@ -15,7 +15,6 @@ public class DynamicSimpleDictionaryADT implements SimpleDictionaryADT {
 
     @Override
     public void add(int key, int value) {
-        // Si la clave ya existe, pisa el valor
         DictionaryNode current = head;
         while (current != null) {
             if (current.key == key) {
@@ -24,7 +23,6 @@ public class DynamicSimpleDictionaryADT implements SimpleDictionaryADT {
             }
             current = current.next;
         }
-        // Si no existe, agrega al frente
         DictionaryNode newNode = new DictionaryNode(key, value);
         newNode.next = head;
         head = newNode;
@@ -45,7 +43,6 @@ public class DynamicSimpleDictionaryADT implements SimpleDictionaryADT {
             }
             current = current.next;
         }
-        // Si no existe la clave, no hace nada
     }
 
     @Override

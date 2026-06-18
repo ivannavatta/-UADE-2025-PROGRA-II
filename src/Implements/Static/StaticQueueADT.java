@@ -8,7 +8,7 @@ public class StaticQueueADT implements QueueADT {
     private int[] array;
     private int first;
     private int last;
-    private int count; // Usamos un contador para facilitar isEmpty y size
+    private int count;
 
     public StaticQueueADT() {
         this.array = new int[100];
@@ -20,7 +20,7 @@ public class StaticQueueADT implements QueueADT {
     @Override
     public void add(int value) {
         if (count >= array.length) {
-            throw new FullStructureException(); // la cola estática está llena
+            throw new FullStructureException();
         }
         array[last] = value;
         last = (last + 1) % array.length;
@@ -30,7 +30,7 @@ public class StaticQueueADT implements QueueADT {
     @Override
     public void remove() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés sacar de una cola vacía
+            throw new EmptyStructureException();
         }
         first = (first + 1) % array.length;
         count--;
@@ -39,7 +39,7 @@ public class StaticQueueADT implements QueueADT {
     @Override
     public int getElement() {
         if (isEmpty()) {
-            throw new EmptyStructureException(); // no podés leer de una cola vacía
+            throw new EmptyStructureException();
         }
         return array[first];
     }

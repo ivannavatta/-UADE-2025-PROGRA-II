@@ -45,7 +45,6 @@ public class DynamicBinaryTreeADT implements BinaryTreeADT {
         } else if (value > node.value) {
             node.right = addRecursive(node.right, value);
         }
-        // Si es igual, no agrega duplicado (BST estándar)
         return node;
     }
 
@@ -63,18 +62,15 @@ public class DynamicBinaryTreeADT implements BinaryTreeADT {
         } else if (value > node.value) {
             node.right = removeRecursive(node.right, value);
         } else {
-            // Nodo encontrado
             if (node.left == null) return node.right;
             if (node.right == null) return node.left;
 
-            // Tiene dos hijos: reemplazar con el mínimo del subárbol derecho
             node.value = findMin(node.right);
             node.right = removeRecursive(node.right, node.value);
         }
         return node;
     }
 
-    // Encuentra el mínimo valor en un subárbol
     private int findMin(TreeNode node) {
         while (node.left != null) {
             node = node.left;

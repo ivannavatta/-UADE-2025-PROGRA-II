@@ -26,7 +26,6 @@ public class DynamicSetADT implements SetADT {
     @Override
     public int choose() {
         if (isEmpty()) throw new EmptyStructureException();
-        // Recorre hasta un índice pseudo-aleatorio basado en el tamaño
         int index = (int) (System.currentTimeMillis() % size);
         SetNode current = head;
         for (int i = 0; i < index; i++) {
@@ -37,7 +36,7 @@ public class DynamicSetADT implements SetADT {
 
     @Override
     public void add(int value) {
-        if (exist(value)) return; // no se permiten repetidos
+        if (exist(value)) return;
         SetNode newNode = new SetNode(value);
         newNode.next = head;
         head = newNode;
@@ -61,7 +60,6 @@ public class DynamicSetADT implements SetADT {
             }
             current = current.next;
         }
-        // Si no existe, no hace nada
     }
 
     @Override

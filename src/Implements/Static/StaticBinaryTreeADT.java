@@ -5,16 +5,6 @@ import Exceptions.FullStructureException;
 import Interfaces.BinaryTreeADT;
 
 public class StaticBinaryTreeADT implements BinaryTreeADT {
-    /*
-     * Implementación con array usando indexación estilo heap:
-     * - Raíz en índice 0
-     * - Hijo izquierdo de i en 2*i + 1
-     * - Hijo derecho de i en 2*i + 2
-     *
-     * Se usa un array booleano para indicar si cada celda está ocupada,
-     * ya que el árbol es un BST y los nodos no necesariamente llenan el array
-     * de forma contigua.
-     */
     private int[] elements;
     private boolean[] occupied;
     private final int capacity;
@@ -41,7 +31,6 @@ public class StaticBinaryTreeADT implements BinaryTreeADT {
         return getSubtree(2);
     }
 
-    // Crea un árbol que representa el subárbol a partir de un índice dado
     private StaticBinaryTreeADT getSubtree(int rootIndex) {
         StaticBinaryTreeADT subtree = new StaticBinaryTreeADT(capacity);
         if (rootIndex < capacity && occupied[rootIndex]) {
@@ -50,7 +39,6 @@ public class StaticBinaryTreeADT implements BinaryTreeADT {
         return subtree;
     }
 
-    // Copia recursivamente el subárbol desde srcIndex al destIndex del árbol destino
     private void copySubtree(StaticBinaryTreeADT dest, int destIndex, int srcIndex) {
         if (srcIndex >= capacity || !occupied[srcIndex]) return;
         if (destIndex >= dest.capacity) throw new FullStructureException();
@@ -75,7 +63,6 @@ public class StaticBinaryTreeADT implements BinaryTreeADT {
         } else if (value > elements[index]) {
             addAt(2 * index + 2, value);
         }
-        // Si es igual, no agrega (BST estándar)
     }
 
     @Override
@@ -92,25 +79,20 @@ public class StaticBinaryTreeADT implements BinaryTreeADT {
         } else if (value > elements[index]) {
             removeAt(2 * index + 2, value);
         } else {
-            // Nodo encontrado
             int leftChild = 2 * index + 1;
             int rightChild = 2 * index + 2;
 
             if (!hasOccupied(leftChild) && !hasOccupied(rightChild)) {
-                // Hoja: simplemente eliminar
                 occupied[index] = false;
             } else if (!hasOccupied(leftChild)) {
-                // Solo hijo derecho: reemplazar con el mínimo del subárbol derecho
                 int minIndex = findMinIndex(rightChild);
                 elements[index] = elements[minIndex];
                 removeAt(rightChild, elements[index]);
             } else if (!hasOccupied(rightChild)) {
-                // Solo hijo izquierdo: reemplazar con el máximo del subárbol izquierdo
                 int maxIndex = findMaxIndex(leftChild);
                 elements[index] = elements[maxIndex];
                 removeAt(leftChild, elements[index]);
             } else {
-                // Dos hijos: reemplazar con el mínimo del subárbol derecho
                 int minIndex = findMinIndex(rightChild);
                 elements[index] = elements[minIndex];
                 removeAt(rightChild, elements[index]);

@@ -10,9 +10,9 @@ public class StaticMultipleDictionaryADT implements MultipleDictionaryADT {
     private int[] keys;
     private int[][] values;
     private int[] valueCount;
-    private int size;            // cantidad de claves distintas
-    private final int capacity;  // máximo de claves distintas
-    private final int maxValues; // máximo de valores por clave
+    private int size;
+    private final int capacity;
+    private final int maxValues;
 
     public StaticMultipleDictionaryADT(int capacity, int maxValues) {
         this.capacity = capacity;
@@ -23,7 +23,6 @@ public class StaticMultipleDictionaryADT implements MultipleDictionaryADT {
         this.size = 0;
     }
 
-    // Retorna el índice de la clave, o -1 si no existe
     private int findKeyIndex(int key) {
         for (int i = 0; i < size; i++) {
             if (keys[i] == key) return i;
@@ -35,12 +34,10 @@ public class StaticMultipleDictionaryADT implements MultipleDictionaryADT {
     public void add(int key, int value) {
         int index = findKeyIndex(key);
         if (index != -1) {
-            // Clave existente: agrega el valor
             if (valueCount[index] == maxValues) throw new FullStructureException();
             values[index][valueCount[index]] = value;
             valueCount[index]++;
         } else {
-            // Clave nueva
             if (size == capacity) throw new FullStructureException();
             keys[size] = key;
             values[size][0] = value;
@@ -53,8 +50,7 @@ public class StaticMultipleDictionaryADT implements MultipleDictionaryADT {
     public void remove(int key) {
         if (isEmpty()) throw new EmptyStructureException();
         int index = findKeyIndex(key);
-        if (index == -1) return; // no existe, no hace nada
-        // Mueve el último al lugar eliminado
+        if (index == -1) return;
         keys[index] = keys[size - 1];
         valueCount[index] = valueCount[size - 1];
         for (int i = 0; i < valueCount[index]; i++) {
@@ -67,19 +63,16 @@ public class StaticMultipleDictionaryADT implements MultipleDictionaryADT {
     public void remove(int key, int value) {
         if (isEmpty()) throw new EmptyStructureException();
         int keyIndex = findKeyIndex(key);
-        if (keyIndex == -1) return; // no existe la clave, no hace nada
+        if (keyIndex == -1) return;
 
         for (int i = 0; i < valueCount[keyIndex]; i++) {
             if (values[keyIndex][i] == value) {
-                // Mueve el último valor al lugar eliminado
                 values[keyIndex][i] = values[keyIndex][valueCount[keyIndex] - 1];
                 valueCount[keyIndex]--;
-                // Si no quedan valores, elimina la clave
                 if (valueCount[keyIndex] == 0) remove(key);
                 return;
             }
         }
-        // Si el valor no existe, no hace nada
     }
 
     @Override
