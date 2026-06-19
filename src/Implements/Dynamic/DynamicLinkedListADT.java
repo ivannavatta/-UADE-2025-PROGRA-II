@@ -4,8 +4,8 @@ import Exceptions.IndexOutOfBoundsException;
 import Implements.Dynamic.Nodes.Node;
 import Interfaces.LinkedListADT;
 
-public class DynamicLinkedListADT implements LinkedListADT {
-    private Node first;
+public class DynamicLinkedListADT<T> implements LinkedListADT<T> {
+    private Node<T> first;
     private int count;
 
     public DynamicLinkedListADT() {
@@ -14,12 +14,12 @@ public class DynamicLinkedListADT implements LinkedListADT {
     }
 
     @Override
-    public void add(int value) {
-        Node newNode = new Node(value);
+    public void add(T value) {
+        Node<T> newNode = new Node<>(value);
         if (first == null) {
             first = newNode;
         } else {
-            Node current = first;
+            Node<T> current = first;
             while (current.next != null) {
                 current = current.next;
             }
@@ -29,16 +29,16 @@ public class DynamicLinkedListADT implements LinkedListADT {
     }
 
     @Override
-    public void insert(int index, int value) {
+    public void insert(int index, T value) {
         if (index < 0 || index > count) {
             throw new IndexOutOfBoundsException();
         }
-        Node newNode = new Node(value);
+        Node<T> newNode = new Node<>(value);
         if (index == 0) {
             newNode.next = first;
             first = newNode;
         } else {
-            Node current = first;
+            Node<T> current = first;
             for (int i = 0; i < index - 1; i++) {
                 current = current.next;
             }
@@ -49,11 +49,11 @@ public class DynamicLinkedListADT implements LinkedListADT {
     }
 
     @Override
-    public int get(int index) {
+    public T get(int index) {
         if (index < 0 || index >= count) {
             throw new IndexOutOfBoundsException();
         }
-        Node current = first;
+        Node<T> current = first;
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
@@ -78,7 +78,7 @@ public class DynamicLinkedListADT implements LinkedListADT {
         if (index == 0) {
             first = first.next;
         } else {
-            Node current = first;
+            Node<T> current = first;
             for (int i = 0; i < index - 1; i++) {
                 current = current.next;
             }

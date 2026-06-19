@@ -1,14 +1,15 @@
 package Interfaces;
 
-public interface LinkedListADT {
 
-    void add(int value);
+public interface LinkedListADT<T> {
 
-    void insert(int index, int value);
+    void add(T value);
+
+    void insert(int index, T value);
 
     void remove(int index);
 
-    int get(int index);
+    T get(int index);
 
     int size();
 

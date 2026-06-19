@@ -5,7 +5,7 @@ import Implements.Dynamic.Nodes.Node;
 import Interfaces.StackADT;
 
 public class DynamicStackADT implements StackADT {
-    private Node top;
+    private Node<Integer> top;
 
     @Override
     public void add(int value) {

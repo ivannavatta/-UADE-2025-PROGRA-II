@@ -1,95 +1,84 @@
 package Controller;
 
 import Exceptions.*;
+import Interfaces.LinkedListADT;
 import Modulo.*;
 import Implements.Dynamic.*;
 
 public class SistemaController {
-
-    private Terminal[] terminales;
-    private Micro[] micros;
-    private Ruta[] rutas;
-    private Viaje[] viajes;
-
-    private DynamicLinkedListADT listaIdTerminales;
-    private DynamicLinkedListADT listaIdMicros;
-    private DynamicLinkedListADT listaIdRutas;
-    private DynamicLinkedListADT listaIdViajes;
+    private LinkedListADT<Terminal> terminales;
+    private LinkedListADT<Micro>    micros;
+    private LinkedListADT<Ruta> rutas;
+    private LinkedListADT<Viaje>    viajes;
 
     private int contadorMicros;
     private int contadorTerminales;
     private int contadorRutas;
     private int contadorViajes;
 
-    private DynamicGraphADT mapaRutas;
+    private DynamicGraphADT            mapaRutas;
     private DynamicSimpleDictionaryADT asignacionesPorMicro;
     private DynamicMultipleDictionaryADT viajesPorMicro;
-    private DynamicPriorityQueueADT colaViajes;
+    private DynamicPriorityQueueADT    colaViajes;
 
     public SistemaController() {
-        this.terminales = new Terminal[10];
-        this.micros = new Micro[15];
-        this.rutas = new Ruta[200];
-        this.viajes = new Viaje[20];
+        this.terminales = new DynamicLinkedListADT<>();
+        this.micros     = new DynamicLinkedListADT<>();
+        this.rutas      = new DynamicLinkedListADT<>();
+        this.viajes     = new DynamicLinkedListADT<>();
 
-        this.listaIdTerminales = new DynamicLinkedListADT();
-        this.listaIdMicros = new DynamicLinkedListADT();
-        this.listaIdRutas = new DynamicLinkedListADT();
-        this.listaIdViajes = new DynamicLinkedListADT();
+        this.contadorMicros      = 0;
+        this.contadorTerminales  = 0;
+        this.contadorRutas       = 0;
+        this.contadorViajes      = 0;
 
-        this.contadorMicros = 0;
-        this.contadorTerminales = 0;
-        this.contadorRutas = 0;
-        this.contadorViajes = 0;
-
-        this.mapaRutas = new DynamicGraphADT();
-        this.asignacionesPorMicro = new DynamicSimpleDictionaryADT();
-        this.viajesPorMicro = new DynamicMultipleDictionaryADT();
-        this.colaViajes = new DynamicPriorityQueueADT();
+        this.mapaRutas             = new DynamicGraphADT();
+        this.asignacionesPorMicro  = new DynamicSimpleDictionaryADT();
+        this.viajesPorMicro        = new DynamicMultipleDictionaryADT();
+        this.colaViajes            = new DynamicPriorityQueueADT();
     }
-
 
     public int buscarIdPorCodigo(String codigo) {
         if (codigo == null) return -1;
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            int idTerminal = listaIdTerminales.get(i);
-            Terminal t = terminales[idTerminal];
-            if (t != null && t.getCodigo().equalsIgnoreCase(codigo.trim())) return idTerminal;
+        for (int i = 0; i < terminales.size(); i++) {
+            Terminal t = terminales.get(i);
+            if (t.getCodigo().equalsIgnoreCase(codigo.trim())) return i;
         }
         return -1;
     }
 
     public Micro buscarMicroPorPatente(String patente) {
         if (patente == null) return null;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int idMicro = listaIdMicros.get(i);
-            Micro m = micros[idMicro];
-            if (m != null && m.getPatente().equalsIgnoreCase(patente.trim())) return m;
+        for (int i = 0; i < micros.size(); i++) {
+            Micro m = micros.get(i);
+            if (m.getPatente().equalsIgnoreCase(patente.trim())) return m;
         }
         return null;
     }
 
     private int buscarIdMicroPorPatente(String patente) {
         if (patente == null) return -1;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int idMicro = listaIdMicros.get(i);
-            Micro m = micros[idMicro];
-            if (m != null && m.getPatente().equalsIgnoreCase(patente.trim())) return idMicro;
+        for (int i = 0; i < micros.size(); i++) {
+            if (micros.get(i).getPatente().equalsIgnoreCase(patente.trim())) return i;
         }
         return -1;
     }
 
     private Ruta buscarRutaDirecta(String codigoOrigen, String codigoDestino) {
-        int idOrigen = buscarIdPorCodigo(codigoOrigen);
+        int idOrigen  = buscarIdPorCodigo(codigoOrigen);
         int idDestino = buscarIdPorCodigo(codigoDestino);
         if (idOrigen == -1 || idDestino == -1) return null;
-
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            int idRuta = listaIdRutas.get(i);
-            Ruta r = rutas[idRuta];
-            if (r != null && r.esIgualA(idOrigen, idDestino)) return r;
+        for (int i = 0; i < rutas.size(); i++) {
+            Ruta r = rutas.get(i);
+            if (r.esIgualA(idOrigen, idDestino)) return r;
         }
         return null;
+    }
+
+    private void imprimirRuta(Ruta r) {
+        String origen  = terminales.get(r.getIdOrigen()).getCodigo();
+        String destino = terminales.get(r.getIdDestino()).getCodigo();
+        System.out.println("    -> " + origen + " -> " + destino);
     }
 
     // ==========================================
@@ -97,68 +86,81 @@ public class SistemaController {
     // ==========================================
 
     public void registrarTerminal(String codigo, String descripcion) {
-        if (buscarIdPorCodigo(codigo) != -1) throw new InvalidTerminalException("Terminal repetida: " + codigo);
+        if (buscarIdPorCodigo(codigo) != -1)
+            throw new InvalidTerminalException("Terminal repetida: " + codigo);
+
         int nuevoId = contadorTerminales;
-        terminales[nuevoId] = new Terminal(nuevoId, codigo, descripcion);
-        listaIdTerminales.add(nuevoId);
+        terminales.add(new Terminal(nuevoId, codigo, descripcion));
         contadorTerminales++;
+
         mapaRutas.addVertex(nuevoId);
     }
 
     public void conectarTerminales(String codigoOrigen, String codigoDestino, int pesoCamino) {
-        int idOrigen = buscarIdPorCodigo(codigoOrigen);
+        int idOrigen  = buscarIdPorCodigo(codigoOrigen);
         int idDestino = buscarIdPorCodigo(codigoDestino);
-        if (idOrigen == -1 || idDestino == -1) throw new InvalidTerminalException("Terminales no existen.");
-        if (buscarRutaDirecta(codigoOrigen, codigoDestino) != null) throw new InvalidRuteException("Ruta ya existente.");
+
+        if (idOrigen == -1 || idDestino == -1)
+            throw new InvalidTerminalException("Una o ambas terminales no existen.");
+        if (buscarRutaDirecta(codigoOrigen, codigoDestino) != null)
+            throw new InvalidRuteException("Ya existe ruta directa de " + codigoOrigen + " a " + codigoDestino);
 
         int nuevoIdRuta = contadorRutas;
-        rutas[nuevoIdRuta] = new Ruta(nuevoIdRuta, idOrigen, idDestino);
-        listaIdRutas.add(nuevoIdRuta);
+        rutas.add(new Ruta(nuevoIdRuta, idOrigen, idDestino));
         contadorRutas++;
+
         mapaRutas.addEdge(idOrigen, idDestino, pesoCamino);
     }
 
     public void planificarViaje(String codigoOrigen, String codigoDestino, String patente, String fecha) {
         Ruta ruta = buscarRutaDirecta(codigoOrigen, codigoDestino);
-        if (ruta == null) throw new InvalidRuteException("No existe ruta directa.");
+        if (ruta == null)
+            throw new InvalidRuteException("No existe ruta directa de " + codigoOrigen + " a " + codigoDestino);
+
         Micro m = buscarMicroPorPatente(patente);
-        if (m == null) throw new InvalidMicroException("Micro no registrado: " + patente);
+        if (m == null)
+            throw new InvalidMicroException("Micro no registrado: " + patente);
 
         int idViaje = contadorViajes;
-        viajes[idViaje] = new Viaje(idViaje, ruta, m, fecha);
-        listaIdViajes.add(idViaje);
+        viajes.add(new Viaje(idViaje, ruta, m, fecha));
         contadorViajes++;
 
         int idMicro = buscarIdMicroPorPatente(patente);
-        int nuevasAsignaciones = asignacionesPorMicro.get(idMicro) + 1;
-        asignacionesPorMicro.add(idMicro, nuevasAsignaciones);
-        m.incrementarAsignaciones();
+        asignacionesPorMicro.add(idMicro, asignacionesPorMicro.get(idMicro) + 1);
 
         viajesPorMicro.add(idMicro, idViaje);
+
         colaViajes.add(idViaje, 2);
     }
 
     public void buscarYMostrarRutas(String codigoOrigen, String codigoDestino, int maxParadas) {
-        int idOrigen = buscarIdPorCodigo(codigoOrigen);
+        int idOrigen  = buscarIdPorCodigo(codigoOrigen);
         int idDestino = buscarIdPorCodigo(codigoDestino);
+
         if (idOrigen == -1 || idDestino == -1) {
-            System.out.println("  [DFS] Origen o Destino no válidos.");
+            System.out.println("  [DFS] Origen o destino no válidos.");
             return;
         }
-        System.out.println("  Rutas encontradas desde " + codigoOrigen + " hasta " + codigoDestino + " (Máx " + maxParadas + " paradas):");
-        boolean[] visitados = new boolean[contadorTerminales];
-        int[] caminoActual = new int[contadorTerminales];
+
+        System.out.println("  Rutas de " + codigoOrigen + " a " + codigoDestino
+                + " (máx " + maxParadas + " paradas):");
+
+        boolean[] visitados   = new boolean[contadorTerminales];
+        int[]     caminoActual = new int[contadorTerminales];
+
         dfsCaminos(idOrigen, idDestino, maxParadas, 0, visitados, caminoActual, 0);
     }
 
-    private void dfsCaminos(int actual, int destino, int maxParadas, int paradas, boolean[] visitados, int[] camino, int paso) {
+    private void dfsCaminos(int actual, int destino, int maxParadas, int paradas,
+                            boolean[] visitados, int[] camino, int paso) {
         camino[paso] = actual;
         paso++;
 
         if (actual == destino) {
             System.out.print("    -> ");
             for (int i = 0; i < paso; i++) {
-                System.out.print(terminales[camino[i]].getCodigo() + (i == paso - 1 ? "" : " -> "));
+                System.out.print(terminales.get(camino[i]).getCodigo());
+                if (i < paso - 1) System.out.print(" -> ");
             }
             System.out.println(" [Paradas: " + (paso - 2) + "]");
             return;
@@ -167,13 +169,36 @@ public class SistemaController {
         if (paradas >= maxParadas) return;
 
         visitados[actual] = true;
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            Ruta r = rutas[listaIdRutas.get(i)];
+        for (int i = 0; i < rutas.size(); i++) {
+            Ruta r = rutas.get(i);
             if (r.getIdOrigen() == actual && !visitados[r.getIdDestino()]) {
-                dfsCaminos(r.getIdDestino(), destino, maxParadas, paradas + 1, visitados, camino, paso);
+                dfsCaminos(r.getIdDestino(), destino, maxParadas, paradas + 1,
+                        visitados, camino, paso);
             }
         }
         visitados[actual] = false;
+    }
+
+    public void identificarTerminalesDesconectadas() {
+        System.out.println("  Terminales sin conexiones:");
+        boolean hayAisladas = false;
+
+        for (int i = 0; i < terminales.size(); i++) {
+            boolean tieneConexion = false;
+            for (int j = 0; j < terminales.size(); j++) {
+                if (mapaRutas.existEdge(i, j) || mapaRutas.existEdge(j, i)) {
+                    tieneConexion = true;
+                    break;
+                }
+            }
+            if (!tieneConexion) {
+                System.out.println("    -> " + terminales.get(i).getCodigo()
+                        + " - " + terminales.get(i).getDescripcion());
+                hayAisladas = true;
+            }
+        }
+
+        if (!hayAisladas) System.out.println("    Todas las terminales tienen al menos una conexión.");
     }
 
     // ==========================================
@@ -181,51 +206,66 @@ public class SistemaController {
     // ==========================================
 
     public void registrarMicro(String patente, String tipo) {
-        if (buscarMicroPorPatente(patente) != null) throw new InvalidMicroException("Micro repetido: " + patente);
+        if (buscarMicroPorPatente(patente) != null)
+            throw new InvalidMicroException("Micro repetido: " + patente);
+
         int idMicro = contadorMicros;
-        micros[idMicro] = new Micro(patente, tipo);
-        listaIdMicros.add(idMicro);
+        micros.add(new Micro(patente, tipo));
         contadorMicros++;
+
         asignacionesPorMicro.add(idMicro, 0);
     }
 
-
+    public void cambiarDisponibilidadMicro(String patente, boolean disponible) {
+        Micro m = buscarMicroPorPatente(patente);
+        if (m == null)
+            throw new InvalidMicroException("Micro no encontrado: " + patente);
+        m.setDisponible(disponible);
+    }
 
     public Micro[] obtenerMicrosAsignados() {
         int cant = 0;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            if (asignacionesPorMicro.get(listaIdMicros.get(i)) > 0) cant++;
+        for (int i = 0; i < micros.size(); i++) {
+            if (asignacionesPorMicro.get(i) > 0) cant++;
         }
         Micro[] resultado = new Micro[cant];
         int idx = 0;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int id = listaIdMicros.get(i);
-            if (asignacionesPorMicro.get(id) > 0) {
-                resultado[idx++] = micros[id];
-            }
+        for (int i = 0; i < micros.size(); i++) {
+            if (asignacionesPorMicro.get(i) > 0) resultado[idx++] = micros.get(i);
         }
         return resultado;
     }
 
     public Micro[] obtenerMicrosMasAsignados() {
         int maxVal = -1;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int asig = asignacionesPorMicro.get(listaIdMicros.get(i));
+        for (int i = 0; i < micros.size(); i++) {
+            int asig = asignacionesPorMicro.get(i);
             if (asig > maxVal) maxVal = asig;
         }
+        if (maxVal <= 0) return new Micro[0];
+
         int cant = 0;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            if (asignacionesPorMicro.get(listaIdMicros.get(i)) == maxVal && maxVal > 0) cant++;
+        for (int i = 0; i < micros.size(); i++) {
+            if (asignacionesPorMicro.get(i) == maxVal) cant++;
         }
         Micro[] resultado = new Micro[cant];
         int idx = 0;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int id = listaIdMicros.get(i);
-            if (asignacionesPorMicro.get(id) == maxVal && maxVal > 0) {
-                resultado[idx++] =micros[id];
-            }
+        for (int i = 0; i < micros.size(); i++) {
+            if (asignacionesPorMicro.get(i) == maxVal) resultado[idx++] = micros.get(i);
         }
         return resultado;
+    }
+
+    public void mostrarViajesDeMicro(String patente) {
+        int idMicro = buscarIdMicroPorPatente(patente);
+        if (idMicro == -1)
+            throw new InvalidMicroException("Micro no encontrado: " + patente);
+
+        int[] idsViajes = viajesPorMicro.get(idMicro);
+        System.out.println("  Viajes del micro [" + patente + "]:");
+        for (int idViaje : idsViajes) {
+            System.out.println("    -> " + viajes.get(idViaje));
+        }
     }
 
     // ==========================================
@@ -233,8 +273,10 @@ public class SistemaController {
     // ==========================================
 
     public void cambiarPrioridadViaje(int idViaje, int nuevaPrioridad) {
-        if (idViaje < 0 || idViaje >= contadorViajes) throw new InvalididTravelException("ID inexistente.");
-        viajes[idViaje].setPrioridad(nuevaPrioridad);
+        if (idViaje < 0 || idViaje >= contadorViajes)
+            throw new InvalididTravelException("ID de viaje inexistente: " + idViaje);
+
+        viajes.get(idViaje).setPrioridad(nuevaPrioridad);
 
         DynamicPriorityQueueADT colaTemp = new DynamicPriorityQueueADT();
         while (!colaViajes.isEmpty()) {
@@ -252,9 +294,9 @@ public class SistemaController {
         int i = 0;
         while (!colaViajes.isEmpty()) {
             int idViaje = colaViajes.getElement();
-            int pri = colaViajes.getPriority();
+            int pri     = colaViajes.getPriority();
             colaViajes.remove();
-            resultado[i++] = viajes[idViaje];
+            resultado[i++] = viajes.get(idViaje);
             colaTemp.add(idViaje, pri);
         }
         colaViajes = colaTemp;
@@ -266,131 +308,147 @@ public class SistemaController {
     // ==========================================
 
     public void listarTerminalesOperadas() {
-        System.out.println("  Terminales Operadas:");
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            Terminal t = terminales[listaIdTerminales.get(i)];
+        System.out.println("  Terminales operadas:");
+        for (int i = 0; i < terminales.size(); i++) {
+            Terminal t = terminales.get(i);
             System.out.println("    • [" + t.getCodigo() + "] " + t.getDescripcion());
         }
     }
 
     public void reportarTerminalesMayorMovimiento() {
-        int[] salidas = new int[contadorTerminales];
+        int[] salidas  = new int[contadorTerminales];
         int[] llegadas = new int[contadorTerminales];
-        for (int i = 0; i < listaIdViajes.size(); i++) {
-            Ruta r = viajes[listaIdViajes.get(i)].getRutaAsignada();
+
+        for (int i = 0; i < viajes.size(); i++) {
+            Ruta r = viajes.get(i).getRutaAsignada();
             salidas[r.getIdOrigen()]++;
             llegadas[r.getIdDestino()]++;
         }
+
         int maxS = -1, maxL = -1;
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            int id = listaIdTerminales.get(i);
-            if (salidas[id] > maxS) maxS = salidas[id];
-            if (llegadas[id] > maxL) maxL = llegadas[id];
+        for (int i = 0; i < terminales.size(); i++) {
+            if (salidas[i]  > maxS) maxS = salidas[i];
+            if (llegadas[i] > maxL) maxL = llegadas[i];
         }
+
         System.out.println("  Mayor número de SALIDAS (" + maxS + "):");
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            int id = listaIdTerminales.get(i);
-            if (salidas[id] == maxS && maxS > 0) System.out.println("    -> " + terminales[id].getCodigo());
+        for (int i = 0; i < terminales.size(); i++) {
+            if (salidas[i] == maxS && maxS > 0)
+                System.out.println("    -> " + terminales.get(i).getCodigo());
         }
+
         System.out.println("  Mayor número de LLEGADAS (" + maxL + "):");
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            int id = listaIdTerminales.get(i);
-            if (llegadas[id] == maxL && maxL > 0) System.out.println("    -> " + terminales[id].getCodigo());
+        for (int i = 0; i < terminales.size(); i++) {
+            if (llegadas[i] == maxL && maxL > 0)
+                System.out.println("    -> " + terminales.get(i).getCodigo());
         }
     }
 
     public void reportarTerminalesMasConectadas() {
         int[] conexiones = new int[contadorTerminales];
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            Ruta r = rutas[listaIdRutas.get(i)];
-            conexiones[r.getIdOrigen()]++;
+        for (int i = 0; i < rutas.size(); i++) {
+            conexiones[rutas.get(i).getIdOrigen()]++;
         }
+
         int maxCon = -1;
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            if (conexiones[listaIdTerminales.get(i)] > maxCon) maxCon = conexiones[listaIdTerminales.get(i)];
+        for (int i = 0; i < terminales.size(); i++) {
+            if (conexiones[i] > maxCon) maxCon = conexiones[i];
         }
+
         System.out.println("  Terminales con más conexiones directas (" + maxCon + "):");
-        for (int i = 0; i < listaIdTerminales.size(); i++) {
-            int id = listaIdTerminales.get(i);
-            if (conexiones[id] == maxCon && maxCon > 0) {
-                System.out.println("    -> " + terminales[id].getCodigo() + " (" + terminales[id].getDescripcion() + ")");
+        for (int i = 0; i < terminales.size(); i++) {
+            if (conexiones[i] == maxCon && maxCon > 0) {
+                System.out.println("    -> " + terminales.get(i).getCodigo()
+                        + " (" + terminales.get(i).getDescripcion() + ")");
             }
         }
     }
 
     // ==========================================
-    //     MÓDULO 5: SIMULACIÓN Y REPROGRAMACIÓN
+    //     MÓDULO 5: SIMULACIÓN Y REPORTES
     // ==========================================
 
     public void reprogramarViaje(int idViaje, String nuevaFecha, String nuevaPatente) {
-        if (idViaje < 0 || idViaje >= contadorViajes) throw new InvalididTravelException("ID de viaje inválido.");
-        Viaje v = viajes[idViaje];
+        if (idViaje < 0 || idViaje >= contadorViajes)
+            throw new InvalididTravelException("ID de viaje inválido: " + idViaje);
+
+        Viaje v = viajes.get(idViaje);
         v.setFecha(nuevaFecha);
 
-        Micro nuevoMicro = buscarMicroPorPatente(nuevaPatente);
-        if (nuevoMicro != null) {
+        if (nuevaPatente != null && !nuevaPatente.isEmpty()) {
+            Micro nuevoMicro = buscarMicroPorPatente(nuevaPatente);
+            if (nuevoMicro == null)
+                throw new InvalidMicroException("Micro no encontrado: " + nuevaPatente);
+
             int idMicroViejo = buscarIdMicroPorPatente(v.getMicroAsignado().getPatente());
+            asignacionesPorMicro.add(idMicroViejo,
+                    asignacionesPorMicro.get(idMicroViejo) - 1);
+
             int idMicroNuevo = buscarIdMicroPorPatente(nuevaPatente);
+            asignacionesPorMicro.add(idMicroNuevo,
+                    asignacionesPorMicro.get(idMicroNuevo) + 1);
 
-            int asigViejo = asignacionesPorMicro.get(idMicroViejo) - 1;
-            asignacionesPorMicro.add(idMicroViejo, asigViejo);
-
-            int asigNuevo = asignacionesPorMicro.get(idMicroNuevo) + 1;
-            asignacionesPorMicro.add(idMicroNuevo, asigNuevo);
+            viajesPorMicro.add(idMicroNuevo, idViaje);
 
             v.setMicroAsignado(nuevoMicro);
-            viajesPorMicro.add(idMicroNuevo, idViaje);
         }
     }
 
     public void generarReporteUtilizacionMicros() {
         int total = 0;
-        for (int i = 0; i < listaIdMicros.size(); i++) total += asignacionesPorMicro.get(listaIdMicros.get(i));
-        System.out.println("  Utilización de Flota:");
-        if (total == 0) return;
-        for (int i = 0; i < listaIdMicros.size(); i++) {
-            int id = listaIdMicros.get(i);
-            double porc = (asignacionesPorMicro.get(id) * 100.0) / total;
-            System.out.println("    -> [" + micros[id].getPatente() + "]: " + porc + "%");
+        for (int i = 0; i < micros.size(); i++) total += asignacionesPorMicro.get(i);
+
+        System.out.println("  Utilización de flota:");
+        if (total == 0) {
+            System.out.println("    Ningún micro tiene viajes asignados.");
+            return;
+        }
+
+        double promedio = (double) total / micros.size();
+        System.out.println("    Promedio global: " + String.format("%.2f", promedio) + " viajes/micro");
+        System.out.println();
+
+        for (int i = 0; i < micros.size(); i++) {
+            int asig  = asignacionesPorMicro.get(i);
+            double pct = (asig * 100.0) / total;
+            System.out.println("    -> [" + micros.get(i).getPatente() + "]: "
+                    + asig + " viajes (" + String.format("%.1f", pct) + "%)");
         }
     }
 
     public void generarReporteRutasExtremas() {
-        int[] usos = new int[contadorRutas];
-        for (int i = 0; i < listaIdViajes.size(); i++) {
-            usos[viajes[listaIdViajes.get(i)].getRutaAsignada().getIdRuta()]++;
+        if (rutas.isEmpty()) {
+            System.out.println("  No hay rutas registradas.");
+            return;
         }
-        int max = -1, min = 99999;
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            int u = usos[listaIdRutas.get(i)];
+
+        int[] usos = new int[contadorRutas];
+        for (int i = 0; i < viajes.size(); i++) {
+            usos[viajes.get(i).getRutaAsignada().getIdRuta()]++;
+        }
+
+        int max = -1, min = Integer.MAX_VALUE;
+        for (int i = 0; i < rutas.size(); i++) {
+            int u = usos[i];
             if (u > max) max = u;
             if (u < min) min = u;
         }
-        System.out.println("  Rutas Máximas Recorridas (" + max + " viajes):");
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            int id = listaIdRutas.get(i);
-            if (usos[id] == max) {
-                Ruta r = rutas[id];
-                String origen = terminales[r.getIdOrigen()].getCodigo();
-                String destino = terminales[r.getIdDestino()].getCodigo();
-                System.out.println("    -> " + origen + " -> " + destino);
-            }
+
+        System.out.println("  Rutas más recorridas (" + max + " viajes):");
+        for (int i = 0; i < rutas.size(); i++) {
+            if (usos[i] == max) imprimirRuta(rutas.get(i));
         }
-        System.out.println("  Rutas Mínimas Recorridas (" + min + " viajes):");
-        for (int i = 0; i < listaIdRutas.size(); i++) {
-            int id = listaIdRutas.get(i);
-            if (usos[id] == min) {
-                Ruta r = rutas[id];
-                String origen = terminales[r.getIdOrigen()].getCodigo();
-                String destino = terminales[r.getIdDestino()].getCodigo();
-                System.out.println("    -> " + origen + " -> " + destino);
-            }
+
+        System.out.println("  Rutas menos recorridas (" + min + " viajes):");
+        for (int i = 0; i < rutas.size(); i++) {
+            if (usos[i] == min) imprimirRuta(rutas.get(i));
         }
     }
 
     // ==========================================
-    //    ESCENARIO: CARGA DE DATOS OBLIGATORIOS
+    //    CARGA DE DATOS INICIALES
     // ==========================================
+
     public void cargarDatosDePrueba() {
         registrarTerminal("BUE", "Retiro Buenos Aires");
         registrarTerminal("COR", "Córdoba Capital");
@@ -429,26 +487,25 @@ public class SistemaController {
         conectarTerminales("ROS", "SFE", 170);
         conectarTerminales("SLA", "TUC", 310);
 
-        planificarViaje("BUE", "ROS", "AA-001-AA", "2026-06-20");
-        planificarViaje("ROS", "COR", "AA-002-AA", "2026-06-21");
-        planificarViaje("COR", "BRC", "AA-003-AA", "2026-06-22");
-        planificarViaje("BUE", "NQN", "BB-004-BB", "2026-06-20");
-        planificarViaje("NQN", "BRC", "BB-005-BB", "2026-06-21");
-        planificarViaje("BUE", "MDZ", "AA-001-AA", "2026-06-23");
-        planificarViaje("MDZ", "BRC", "AA-002-AA", "2026-06-24");
-        planificarViaje("ROS", "SFE", "BB-006-BB", "2026-06-20");
-        planificarViaje("SLA", "TUC", "CC-007-CC", "2026-06-25");
-
-        planificarViaje("BUE", "ROS", "AA-001-AA", "2026-07-01");
-        planificarViaje("ROS", "COR", "CC-008-CC", "2026-07-02");
-        planificarViaje("COR", "BRC", "CC-009-CC", "2026-07-03");
-        planificarViaje("BUE", "NQN", "DD-010-DD", "2026-07-01");
-        planificarViaje("NQN", "BRC", "DD-011-DD", "2026-07-02");
-        planificarViaje("BUE", "MDZ", "DD-012-DD", "2026-07-05");
-        planificarViaje("ROS", "SFE", "EE-013-EE", "2026-07-02");
-        planificarViaje("SLA", "TUC", "EE-014-EE", "2026-07-06");
-        planificarViaje("BUE", "ROS", "EE-015-EE", "2026-07-10");
-        planificarViaje("ROS", "COR", "AA-002-AA", "2026-07-11");
-        planificarViaje("BUE", "NQN", "BB-004-BB", "2026-07-12");
+        planificarViaje("BUE", "ROS",  "AA-001-AA", "2026-06-20");
+        planificarViaje("ROS", "COR",  "AA-002-AA", "2026-06-21");
+        planificarViaje("COR", "BRC",  "AA-003-AA", "2026-06-22");
+        planificarViaje("BUE", "NQN",  "BB-004-BB", "2026-06-20");
+        planificarViaje("NQN", "BRC",  "BB-005-BB", "2026-06-21");
+        planificarViaje("BUE", "MDZ",  "AA-001-AA", "2026-06-23");
+        planificarViaje("MDZ", "BRC",  "AA-002-AA", "2026-06-24");
+        planificarViaje("ROS", "SFE",  "BB-006-BB", "2026-06-20");
+        planificarViaje("SLA", "TUC",  "CC-007-CC", "2026-06-25");
+        planificarViaje("BUE", "ROS",  "AA-001-AA", "2026-07-01");
+        planificarViaje("ROS", "COR",  "CC-008-CC", "2026-07-02");
+        planificarViaje("COR", "BRC",  "CC-009-CC", "2026-07-03");
+        planificarViaje("BUE", "NQN",  "DD-010-DD", "2026-07-01");
+        planificarViaje("NQN", "BRC",  "DD-011-DD", "2026-07-02");
+        planificarViaje("BUE", "MDZ",  "DD-012-DD", "2026-07-05");
+        planificarViaje("ROS", "SFE",  "EE-013-EE", "2026-07-02");
+        planificarViaje("SLA", "TUC",  "EE-014-EE", "2026-07-06");
+        planificarViaje("BUE", "ROS",  "EE-015-EE", "2026-07-10");
+        planificarViaje("ROS", "COR",  "AA-002-AA", "2026-07-11");
+        planificarViaje("BUE", "NQN",  "BB-004-BB", "2026-07-12");
     }
 }

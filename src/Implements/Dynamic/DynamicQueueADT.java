@@ -5,7 +5,7 @@ import Implements.Dynamic.Nodes.Node;
 import Interfaces.QueueADT;
 
 public class DynamicQueueADT implements QueueADT {
-    private Node first;
+    private Node<Integer> first;
     private Node last;
 
     public DynamicQueueADT() {
