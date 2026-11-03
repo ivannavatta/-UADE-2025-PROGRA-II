@@ -256,6 +256,13 @@ public class SistemaController {
         return resultado;
     }
 
+    public int obtenerAsignacionesDeMicro(String patente) {
+        int idMicro = buscarIdMicroPorPatente(patente);
+        if (idMicro == -1)
+            throw new InvalidMicroException("Micro no encontrado: " + patente);
+        return asignacionesPorMicro.get(idMicro);
+    }
+
     public void mostrarViajesDeMicro(String patente) {
         int idMicro = buscarIdMicroPorPatente(patente);
         if (idMicro == -1)

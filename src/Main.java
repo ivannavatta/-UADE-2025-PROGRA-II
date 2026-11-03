@@ -68,7 +68,7 @@ public class Main {
                         Micro[] topMicros = sistema.obtenerMicrosMasAsignados();
                         System.out.println("\n--- Micros con mayor cantidad de asignaciones ---");
                         for (Micro m : topMicros) {
-                            System.out.println("-> Patente: [" + m.getPatente() + "] | Tipo: " + m.getTipo() + " | Asignaciones: " + m.getContadorAsignaciones());
+                            System.out.println("-> Patente: [" + m.getPatente() + "] | Tipo: " + m.getTipo() + " | Asignaciones: " + sistema.obtenerAsignacionesDeMicro(m.getPatente()));
                         }
                         break;
                     case 3:
